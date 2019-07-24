@@ -22,7 +22,7 @@ static int compare(const void *p1, const void *p2)
 	return (int)(*(long *)p1 - *(long *)p2);
 }
 
-static void append_list(long n)
+static void insert_list(long n)
 {
 	/*
 	if (exist(n)) {
@@ -49,7 +49,7 @@ static void append_list(long n)
 static void rec_part(long now_proc, long last_i, long n)
 {
 	if (!n) {
-		append_list(now_proc);
+		insert_list(now_proc);
 	}
 	for (long i = last_i > n ? n : last_i; i > 0; --i) {
 		rec_part(now_proc * i, i, n - i);
