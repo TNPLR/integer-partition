@@ -2,6 +2,9 @@
 #include <stdlib.h>
 // This RB-Tree is for the Integer-Partition Usage
 
+#define unlikely(x) __builtin_expect(!!(x), 0)
+#define likely(x) __builtin_expect(!!(x), 1)
+
 static struct node nil = {
 	.value = -1,
 	.color = BLACK,
@@ -19,7 +22,7 @@ static void right_rotate(struct rbtree* rbtree, struct node* nd)
 	}
 	new_root->parent = nd->parent;
 
-	if (nd->parent == &nil) {
+	if (unlikely(nd->parent == &nil)) {
 		rbtree->root = new_root;
 	} else if (nd == nd->parent->rchild) {
 		nd->parent->rchild = new_root;
@@ -39,7 +42,7 @@ static void left_rotate(struct rbtree* rbtree, struct node* nd)
 	}
 	new_root->parent = nd->parent;
 
-	if (nd->parent == &nil) {
+	if (unlikely(nd->parent == &nil)) {
 		rbtree->root = new_root;
 	} else if (nd == nd->parent->lchild) {
 		nd->parent->lchild = new_root;
@@ -102,10 +105,10 @@ void insert_non_exist_node(struct rbtree *rbtree, long value)
 	struct node *parent = &nil;
 	while (sentinel != &nil) {
 		parent = sentinel;
-		if (value < sentinel->value) { // Go Left
-			sentinel = sentinel->lchild;
-		} else if (value > sentinel->value) { // Go Right
+		if (value > sentinel->value) { // Go Right
 			sentinel = sentinel->rchild;
+		} else if (value < sentinel->value) { // Go Left
+			sentinel = sentinel->lchild;
 		} else { // Exists
 			return;
 		}
@@ -113,7 +116,7 @@ void insert_non_exist_node(struct rbtree *rbtree, long value)
 	++rbtree->node_count;
 	struct node *new_node = malloc(sizeof(struct node));
 	new_node->parent = parent;
-	if (parent == &nil) {
+	if (unlikely(parent == &nil)) {
 		rbtree->root = new_node; 
 	} else if (value < parent->value) {
 		parent->lchild = new_node;
