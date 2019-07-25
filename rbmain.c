@@ -40,5 +40,5 @@ int main(int argc, char *argv[])
 	sscanf(argv[1], "%ld", &i);
 	clock_t start = clock();
 	puts(part(i));
-	printf("Time usage: %f\n", (double)(clock()-start) / CLOCKS_PER_SEC);
+	printf("Time usage: %f sec(s)\n", (double)(clock()-start) / CLOCKS_PER_SEC);
 }

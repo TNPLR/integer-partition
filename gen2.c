@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
+
 struct rbtree *rbtree;
 long start_from = 0;
 long **proc_array;
@@ -74,6 +75,7 @@ static double medium(long *proc_list)
                 return (double)(proc_list[(proc_list[0] >> 1)] + proc_list[(proc_list[0] >> 1) + 1]) / 2;
         }
 }
+
 char *part(long n)
 {
 	rbtree = malloc(sizeof(struct rbtree));
@@ -114,11 +116,12 @@ char *part(long n)
 		proc_array[i-1] = malloc((rbtree->node_count + 1)* sizeof(long));
 		(proc_array[i-1])[0] = rbtree->node_count;
 		copy_to_array(&(proc_array[i-1])[1], rbtree);
-
+#ifdef VERBOSE
 		long range = range_rbtree(rbtree);
 		double medium = medium_rbtree(rbtree);
 		double average = (double)sum_rbtree(rbtree) / rbtree->node_count;
 		printf("N=%ld Range: %ld Average: %.2f Median: %.2f\n", i, range, average, medium);
+#endif
 	}
 	long range = range_rbtree(rbtree);
 	double medium = medium_rbtree(rbtree);
@@ -141,6 +144,6 @@ int main(int argc, char *argv[])
 	sscanf(argv[1], "%ld", &n);
 	clock_t start = clock();
 	puts(part(n));
-	printf("Time usage: %f\n", (double)(clock()-start) / CLOCKS_PER_SEC);
+	printf("Time usage: %f sec(s)\n", (double)(clock()-start) / CLOCKS_PER_SEC);
 	return 0;
 }
