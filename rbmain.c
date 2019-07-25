@@ -1,9 +1,8 @@
 #include "rbtree.h"
 
-#include <math.h>
+#include <time.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <stddef.h>
 
 char buffer[256];
 struct rbtree *rbtree;
@@ -39,5 +38,7 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	sscanf(argv[1], "%ld", &i);
+	clock_t start = clock();
 	puts(part(i));
+	printf("Time usage: %f\n", (double)(clock()-start) / CLOCKS_PER_SEC);
 }

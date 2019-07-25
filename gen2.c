@@ -1,5 +1,5 @@
 #include "rbtree.h"
-#include <limits.h>
+#include <time.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -139,5 +139,8 @@ int main(int argc, char *argv[])
 	}
 	long n;
 	sscanf(argv[1], "%ld", &n);
+	clock_t start = clock();
 	puts(part(n));
+	printf("Time usage: %f\n", (double)(clock()-start) / CLOCKS_PER_SEC);
+	return 0;
 }
