@@ -130,7 +130,7 @@ void insert_non_exist_node(struct rbtree *rbtree, long value)
 	insert_fix_rbtree(rbtree, new_node);
 }
 
-static struct node *leftmost(struct node *nd)
+struct node *leftmost(struct node *nd)
 {
 	while (nd->lchild != &nil) {
 		nd = nd->lchild;
@@ -138,7 +138,7 @@ static struct node *leftmost(struct node *nd)
 	return nd;
 }
 
-static struct node *rightmost(struct node *nd)
+struct node *rightmost(struct node *nd)
 {
 	while (nd->rchild != &nil) {
 		nd = nd->rchild;
@@ -151,7 +151,7 @@ long range_rbtree(struct rbtree *rbtree)
 	return rightmost(rbtree->root)->value - 1;
 }
 
-static struct node* inorder_successor(struct rbtree *rbtree, struct node *nd)
+struct node* inorder_successor(struct node *nd)
 {
 	if (nd->rchild != &nil) {
 		return leftmost(nd->rchild);
@@ -164,19 +164,44 @@ static struct node* inorder_successor(struct rbtree *rbtree, struct node *nd)
 	return successor;
 }
 
+struct node* inorder_predecessor(struct node *nd)
+{
+	if (nd->lchild != &nil) {
+		return rightmost(nd->lchild);
+	}
+	struct node *predecessor = nd->parent;
+	while (predecessor != &nil && nd == predecessor->lchild) {
+		nd = predecessor;
+		predecessor = predecessor->parent;
+	}
+	return predecessor;
+}
+
 double medium_rbtree(struct rbtree *rbtree)
 {
 	long medium_index = rbtree->node_count >> 1;
 	struct node* inorder_first = leftmost(rbtree->root);
 	// Using InOrder To Travel
 	for (long i = 1; i < medium_index; ++i) {
-		inorder_first = inorder_successor(rbtree, inorder_first);
+		inorder_first = inorder_successor(inorder_first);
 	}
 	if (rbtree->node_count & 1) {
-		return (double)(inorder_successor(rbtree, inorder_first)->value);
+		return (double)(inorder_successor(inorder_first)->value);
 	} else {
-		return (double)(inorder_first->value + inorder_successor(rbtree, inorder_first)->value) / 2.0;
+		return (double)(inorder_first->value + inorder_successor(inorder_first)->value) / 2.0;
 	}
+}
+
+static void travel_delete_all(struct node *nd)
+{
+	if (nd != &nil) {
+		free(nd);
+	}
+}
+
+void delete_rbtree(struct rbtree* rbtree)
+{
+	travel_delete_all(rbtree->root);
 }
 
 static long travel_sum_delete_all(struct node *nd)
@@ -194,4 +219,64 @@ static long travel_sum_delete_all(struct node *nd)
 long sum_delete_rbtree(struct rbtree* rbtree)
 {
 	return travel_sum_delete_all(rbtree->root);
+}
+
+// Joing rbtree2 to rbtree1
+void join_tree(struct rbtree* rbtree1, const struct rbtree* rbtree2)
+{
+	struct node* nd = leftmost(rbtree2->root);
+	for (long k = 0; k < rbtree2->node_count; ++k) {
+		insert_non_exist_node(rbtree1, nd->value);
+		nd = inorder_successor(nd);
+	}
+}
+
+static struct node *copy_node(struct node* parent, const struct node* src)
+{
+	if (src != &nil) {
+		struct node* tmp = malloc(sizeof(struct node));
+		tmp->parent = parent;
+
+		tmp->lchild = copy_node(tmp, src->lchild);
+
+		tmp->rchild = copy_node(tmp, src->rchild);
+
+		tmp->value = src->value;
+
+		tmp->color = src->color;
+		return tmp;
+	}
+	return &nil;
+}
+
+// Copy rbtree2 to rbtree1
+void copy_tree(struct rbtree* dest, const struct rbtree* src)
+{
+	dest->root = copy_node(&nil, src->root);
+	dest->node_count = src->node_count;
+}
+
+static long travel_sum_all(struct node *nd)
+{
+	if (nd != &nil) {
+		long sum = travel_sum_all(nd->rchild);
+		sum += travel_sum_all(nd->lchild);
+		sum += nd->value;
+		return sum;
+	}
+	return 0;
+}
+
+long sum_rbtree(struct rbtree* rbtree)
+{
+	return travel_sum_all(rbtree->root);
+}
+
+void copy_to_array(long *buffer, const struct rbtree* src)
+{
+	struct node *nd = leftmost(src->root);
+	for (long i = 0; i < src->node_count; ++i) {
+		buffer[i] = nd->value;
+		nd = inorder_successor(nd);
+	}
 }
