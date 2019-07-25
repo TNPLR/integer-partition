@@ -29,4 +29,5 @@ void join_tree(struct rbtree* rbtree1, const struct rbtree* rbtree2);
 void copy_tree(struct rbtree *dest, const struct rbtree *src);
 
 void copy_to_array(long *buffer, const struct rbtree* src);
+void copy_from_array(struct rbtree* dest, long *buffer);
 #endif // RBTREE_H_

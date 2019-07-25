@@ -280,3 +280,7 @@ void copy_to_array(long *buffer, const struct rbtree* src)
 		nd = inorder_successor(nd);
 	}
 }
+
+void copy_from_array(struct rbtree* dest, long *buffer)
+{
+}
