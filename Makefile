@@ -1,10 +1,10 @@
 CC=gcc
 ifeq (${DEBUG},1)
-CFLAGS=-fprofile-arcs -ftest-coverage -pg -O3 -fno-stack-protector
+CFLAGS+=-fprofile-arcs -ftest-coverage -pg -O3 -fno-stack-protector
 else ifeq (${DEBUG}, 2)
-CFLAGS=-fprofile-arcs -ftest-coverage -pg -O0 -g -ggdb -DVERBOSE
+CFLAGS+=-fprofile-arcs -ftest-coverage -pg -O0 -g -ggdb -DVERBOSE
 else
-CFLAGS=-O3
+CFLAGS+=-O3
 endif
 .PHONY: clear speed_test all
 all:rbtree_main gen2
